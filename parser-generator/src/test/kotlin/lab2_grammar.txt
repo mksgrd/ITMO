@@ -1,0 +1,28 @@
+grammar Lab2Grammar;
+
+start : a;
+
+a : c a_prime;
+
+a_prime : ALTER a | #;
+
+c : p c_prime;
+
+c_prime : c | #;
+
+p : k p_prime;
+
+p_prime : PLUS | #;
+
+k : e k_prime;
+
+k_prime : STAR | #;
+
+e : LPAREN a RPAREN | WORD;
+
+WORD : `[a-z]+`;
+LPAREN : '(';
+RPAREN : ')';
+STAR : '*';
+PLUS : '+';
+ALTER: '|';

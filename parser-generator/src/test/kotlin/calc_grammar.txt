@@ -1,0 +1,31 @@
+grammar Calculator;
+
+start returns [Int res] : term op_apply(term.res!!) {$res = $op_apply!!.res};
+
+op_apply [Int arg] returns [Int res] : op term {$res = if($op!!.MINUS != null) $arg - $term!!.res!! else $arg + $term!!.res!!}
+                                       op_apply($res!!) {$res = $op_apply!!.res}
+                                     | # {$res = $arg};
+
+op : PLUS | MINUS;
+
+term returns [Int res] : unary term_cont(unary.res!!) {$res = $term_cont!!.res};
+
+term_cont [Int arg] returns [Int res] : op2 unary {$res = if($op2!!.MUL!=null) $arg * $unary!!.res!! else $arg / $unary!!.res!!}
+                                        term_cont($res!!) {$res = $term_cont!!.res}
+                                      | # {$res = $arg};
+
+op2 : MUL | DIV;
+
+unary returns [Int res] : MINUS expr {$res = $expr!!.res!! *-1}
+                        | expr {$res = $expr!!.res};
+
+expr returns [Int res] : LPAREN start RPAREN {$res = $start!!.res}
+                       | NUM {$res = $NUM!!.text.toInt()};
+
+MUL : '*';
+DIV : '/';
+PLUS : '+';
+MINUS : '-';
+LPAREN : '(';
+RPAREN : ')';
+NUM : `[0-9]+`;
